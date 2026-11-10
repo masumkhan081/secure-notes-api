@@ -23,13 +23,12 @@ const noteSchema = new Schema(
   },
   {
     timestamps: true,
-    collection: "notes",
+    collection: "notes", // Keep "notes" and "posts" in their respective files.
+    autoCreate: false,
+    autoIndex: false,
   },
 );
 
-noteSchema.index(
-  { ownerId: 1, _id: -1 },
-  { name: "notes_owner_id_desc" },
-);
+noteSchema.index({ ownerId: 1, _id: -1 }, { name: "notes_owner_id_desc" });
 
 export const Note = model("Note", noteSchema);

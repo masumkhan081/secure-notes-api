@@ -24,6 +24,8 @@ const postSchema = new Schema(
   {
     timestamps: true,
     collection: "posts",
+     autoCreate: false,
+    autoIndex: false,
   },
 );
 

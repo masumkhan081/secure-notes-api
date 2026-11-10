@@ -10,7 +10,18 @@ import { Post } from "./models/post.model.js";
 async function startServer(): Promise<void> {
   await connectDatabase();
 
-  await Promise.all([User.init(), Note.init(), Post.init()]);
+  await Promise.all([
+    User.createCollection(),
+    Note.createCollection(),
+    Post.createCollection(),
+  ]);
+
+  await Promise.all([
+    User.createIndexes(),
+    Note.createIndexes(),
+    Post.createIndexes(),
+  ]);
+
   console.log("Database models and indexes ready");
 
   const server = app.listen(env.PORT, "0.0.0.0", () => {
@@ -45,9 +56,12 @@ async function startServer(): Promise<void> {
 }
 
 startServer().catch((error: unknown) => {
-  const name = error instanceof Error ? error.name : "UnknownError";
-  console.error(
-    `Startup failed (${name}). Check Atlas access and configuration.`,
-  );
+  if (error instanceof Error) {
+    console.error(`Startup failed: ${error.name}: ${error.message}`);
+    console.error(error.stack);
+  } else {
+    console.error("Startup failed:", error);
+  }
+
   process.exit(1);
 });

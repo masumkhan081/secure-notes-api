@@ -34,12 +34,11 @@ const userSchema = new Schema(
   {
     timestamps: true,
     collection: "users",
+    autoCreate: false,
+    autoIndex: false,
   },
 );
 
-userSchema.index(
-  { email: 1 },
-  { unique: true, name: "users_email_unique" },
-);
+userSchema.index({ email: 1 }, { unique: true, name: "users_email_unique" });
 
 export const User = model("User", userSchema);
