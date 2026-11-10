@@ -2,9 +2,16 @@ import mongoose from "mongoose";
 import { app } from "./app.js";
 import { connectDatabase } from "./config/database.js";
 import { env } from "./config/env.js";
+//
+import { User } from "./models/user.model.js";
+import { Note } from "./models/note.model.js";
+import { Post } from "./models/post.model.js";
 
 async function startServer(): Promise<void> {
   await connectDatabase();
+
+  await Promise.all([User.init(), Note.init(), Post.init()]);
+  console.log("Database models and indexes ready");
 
   const server = app.listen(env.PORT, "0.0.0.0", () => {
     console.log(`Secure Notes API listening on port ${env.PORT}`);
@@ -39,6 +46,8 @@ async function startServer(): Promise<void> {
 
 startServer().catch((error: unknown) => {
   const name = error instanceof Error ? error.name : "UnknownError";
-  console.error(`Startup failed (${name}). Check Atlas access and configuration.`);
+  console.error(
+    `Startup failed (${name}). Check Atlas access and configuration.`,
+  );
   process.exit(1);
 });
