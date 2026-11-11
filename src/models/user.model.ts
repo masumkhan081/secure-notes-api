@@ -41,4 +41,6 @@ const userSchema = new Schema(
 
 userSchema.index({ email: 1 }, { unique: true, name: "users_email_unique" });
 
+userSchema.index({ interests: 1, _id: -1 }, { name: "users_interest_id_desc" });
+
 export const User = model("User", userSchema);

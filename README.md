@@ -44,3 +44,4 @@ It never runs automatically during application startup.
 - Removing a normal user also removes their notes and posts
   in a database transaction.
 - Admin access to other users' notes is read-only.
+

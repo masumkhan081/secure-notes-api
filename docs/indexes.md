@@ -24,11 +24,26 @@ It does not need another compound index.
 
 ## Interests aggregation
 
-Grouping all users by interests requires processing the relevant users.
-An interests index does not eliminate the full $unwind/$group work.
+The interests view has two paginated operations:
 
-We will not add an interests index without a query that benefits from it.
-We will inspect execution plans when implementing the actual pipelines.
+1. List interest groups and their user counts.
+2. List users belonging to a selected interest.
+
+Each operation uses exactly one collection.aggregate() call.
+There are no additional find, distinct or count queries for these results.
+
+Grouping uses $unwind and $group. It processes the collection;
+the interests index does not eliminate this aggregation work.
+Users with no interests do not appear in any group.
+
+The compound index { interests: 1, _id: -1 } supports the selected-interest
+user list's initial match and descending ID ordering.
+It is a multikey index because interests is an array.
+
+The grouped output uses an alphabetical interest cursor.
+The selected-interest user list uses a descending ObjectId cursor.
+
+Execution plans still need verification against representative data.
 
 ## Verification
 

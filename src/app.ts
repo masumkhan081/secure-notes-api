@@ -3,6 +3,7 @@ import { authRouter } from "./features/auth/auth.routes.js";
 import { errorHandler } from "./middleware/error-handler.js";
 import { noteRouter } from "./features/notes/note.routes.js";
 import { adminRouter } from "./features/admin/admin.routes.js";
+import { interestRouter } from "./features/admin/interest.routes.js";
 
 export const app = express();
 
@@ -19,6 +20,7 @@ app.get("/api/health", (_req, res) => {
 app.use("/api/auth", authRouter);
 app.use("/api/notes", noteRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/admin/interests", interestRouter);
 
 app.use((_req, res) => {
   res.status(404).json({
