@@ -4,6 +4,10 @@ import { z } from "zod";
 import { User } from "../../models/user.model.js";
 import { requireAuth, requireAdmin } from "../../middleware/auth.js";
 import { paginationSchema, paginate } from "../../lib/pagination.js";
+import {
+  buildInterestGroupsPipeline,
+  buildInterestUsersPipeline,
+} from "./interest.pipelines.js";
 
 export const interestRouter = Router();
 
@@ -32,23 +36,7 @@ interestRouter.get("/", async (req, res) => {
   const { cursor, limit } = groupPaginationSchema.parse(req.query);
 
   const groups = await User.collection
-    .aggregate<InterestGroup>([
-      {
-        $project: {
-          interests: { $setUnion: ["$interests", []] },
-        },
-      },
-      { $unwind: "$interests" },
-      {
-        $group: {
-          _id: "$interests",
-          userCount: { $sum: 1 },
-        },
-      },
-      ...(cursor ? [{ $match: { _id: { $gt: cursor } } }] : []),
-      { $sort: { _id: 1 } },
-      { $limit: limit + 1 },
-    ])
+    .aggregate<InterestGroup>(buildInterestGroupsPipeline(limit, cursor))
     .toArray();
 
   const hasMore = groups.length > limit;
@@ -73,27 +61,9 @@ interestRouter.get("/users", async (req, res) => {
     .parse(req.query);
 
   const users = await User.collection
-    .aggregate<InterestUser>([
-      {
-        $match: {
-          interests: query.interest,
-          ...(query.cursor
-            ? { _id: { $lt: new Types.ObjectId(query.cursor) } }
-            : {}),
-        },
-      },
-      { $sort: { _id: -1 } },
-      { $limit: query.limit + 1 },
-      {
-        $project: {
-          _id: 1,
-          name: 1,
-          email: 1,
-          role: 1,
-          interests: 1,
-        },
-      },
-    ])
+    .aggregate<InterestUser>(
+      buildInterestUsersPipeline(query.interest, query.limit, query.cursor),
+    )
     .toArray();
 
   const page = paginate(users, query.limit);

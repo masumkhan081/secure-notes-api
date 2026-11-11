@@ -11,6 +11,7 @@ import {
   paginate,
 } from "../../lib/pagination.js";
 import { createPostSchema } from "./post.schema.js";
+import { buildUserPostsPipeline } from "./post.pipelines.js";
 
 export const postRouter = Router();
 
@@ -91,41 +92,7 @@ postRouter.get("/by-user/:userId", async (req, res) => {
   const { cursor, limit } = paginationSchema.parse(req.query);
 
   const results = await User.collection
-    .aggregate<UserPostsResult>([
-      { $match: { _id: new Types.ObjectId(userId) } },
-      {
-        $lookup: {
-          from: "posts",
-          localField: "_id",
-          foreignField: "authorId",
-          pipeline: [
-            ...(cursor
-              ? [{ $match: { _id: { $lt: new Types.ObjectId(cursor) } } }]
-              : []),
-            { $sort: { _id: -1 } },
-            { $limit: limit + 1 },
-            {
-              $project: {
-                _id: 1,
-                authorId: 1,
-                title: 1,
-                content: 1,
-                createdAt: 1,
-                updatedAt: 1,
-              },
-            },
-          ],
-          as: "posts",
-        },
-      },
-      {
-        $project: {
-          _id: 1,
-          name: 1,
-          posts: 1,
-        },
-      },
-    ])
+    .aggregate<UserPostsResult>(buildUserPostsPipeline(userId, limit, cursor))
     .toArray();
 
   const user = results[0];
