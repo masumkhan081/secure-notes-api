@@ -23,3 +23,15 @@ Node.js, Express, TypeScript, MongoDB and Mongoose.
 - The first admin is created through an explicit seed command.
 - Public registration cannot assign the admin role.
 - Setup instructions will be added alongside implementation.
+
+## First administrator
+
+Set SEED_ADMIN_NAME, SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD
+in the local environment, then run:
+
+npm run seed:admin
+
+The command creates the initial administrator.
+Rerunning it preserves an existing administrator's details and password.
+It refuses to promote an existing normal user.
+It never runs automatically during application startup.
