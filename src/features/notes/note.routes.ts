@@ -13,6 +13,8 @@ import {
   updateNoteSchema,
 } from "./note.schema.js";
 
+import { withActiveUser } from "../../lib/with-active-user.js";
+
 export const noteRouter = Router();
 
 noteRouter.use(requireAuth);
@@ -47,11 +49,17 @@ function toNoteResponse(note: {
 
 noteRouter.post("/", async (req, res) => {
   const input = createNoteSchema.parse(req.body);
+  const ownerId = getOwnerId(req);
 
-  const note = await Note.create({
-    title: input.title,
-    content: input.content,
-    ownerId: getOwnerId(req),
+  const note = await withActiveUser(ownerId, async (session) => {
+    const document = new Note({
+      title: input.title,
+      content: input.content,
+      ownerId,
+    });
+
+    await document.save({ session });
+    return document;
   });
 
   res.status(201).json({ note: toNoteResponse(note) });
@@ -121,6 +129,8 @@ noteRouter.patch("/:id", async (req, res) => {
 
   res.status(200).json({ note: toNoteResponse(note) });
 });
+
+
 
 noteRouter.delete("/:id", async (req, res) => {
   const id = objectIdSchema.parse(req.params.id);

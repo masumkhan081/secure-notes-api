@@ -49,3 +49,19 @@ Execution plans still need verification against representative data.
 
 Index definitions are the initial query-driven plan.
 Execution statistics will be checked against the implemented queries.
+
+## User posts lookup
+
+GET /api/posts/by-user/:userId uses one aggregation pipeline.
+
+- The initial user match uses the existing users _id index.
+- $lookup joins users._id to posts.authorId.
+- The posts index { authorId: 1, _id: -1 } supports author filtering
+  and descending post pagination.
+- Pagination happens inside $lookup, so it does not load all author posts.
+- A missing user returns 404.
+- An existing user without posts returns an empty list.
+- Public author information contains only ID and name.
+
+Public posts are readable without authentication.
+Creating a post requires authentication.

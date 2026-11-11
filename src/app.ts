@@ -4,6 +4,7 @@ import { errorHandler } from "./middleware/error-handler.js";
 import { noteRouter } from "./features/notes/note.routes.js";
 import { adminRouter } from "./features/admin/admin.routes.js";
 import { interestRouter } from "./features/admin/interest.routes.js";
+import { postRouter } from "./features/posts/post.routes.js";
 
 export const app = express();
 
@@ -21,6 +22,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/notes", noteRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/admin/interests", interestRouter);
+app.use("/api/posts", postRouter);
 
 app.use((_req, res) => {
   res.status(404).json({
