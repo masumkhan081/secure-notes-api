@@ -35,3 +35,12 @@ The command creates the initial administrator.
 Rerunning it preserves an existing administrator's details and password.
 It refuses to promote an existing normal user.
 It never runs automatically during application startup.
+
+## Administrative rules
+
+- Admins create normal users and edit profile fields.
+- Public and administrative user forms cannot assign roles.
+- Administrator accounts are protected from deletion.
+- Removing a normal user also removes their notes and posts
+  in a database transaction.
+- Admin access to other users' notes is read-only.
