@@ -15,19 +15,25 @@
   "license": "ISC",
   "dependencies": {
     "@node-rs/argon2": "2.2.2",
+    "cors": "2.8.6",
     "dotenv": "18.0.10",
     "express": "5.3.0",
     "express-rate-limit": "8.7.4",
+    "helmet": "8.3.0",
     "jsonwebtoken": "9.0.3",
     "mongoose": "8.24.8",
     "zod": "4.6.7"
   },
   "devDependencies": {
+    "@types/cors": "2.8.19",
     "@types/express": "5.0.6",
     "@types/jsonwebtoken": "9.0.10",
     "@types/node": "22.20.5",
     "tsx": "4.23.15",
     "typescript": "5.9.3"
   },
-  "type": "module"
+  "type": "module",
+  "engines": {
+    "node": "22.x"
+  }
 }

@@ -13,6 +13,13 @@ const envSchema = z.object({
   JWT_SECRET: z
     .string()
     .regex(/^[a-f0-9]{64}$/i, "Must be a random 64-character hex secret"),
+  CORS_ORIGINS: z
+    .string()
+    .default("http://localhost:5173")
+    .transform((value) => value.split(",").map((origin) => origin.trim()))
+    .pipe(z.array(z.string().url()).min(1)),
+
+  TRUST_PROXY_HOPS: z.coerce.number().int().min(0).max(5).default(0),
 });
 
 const result = envSchema.safeParse(process.env);
