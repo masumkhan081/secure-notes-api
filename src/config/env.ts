@@ -9,10 +9,10 @@ const envSchema = z.object({
   MONGODB_URI: z
     .string()
     .trim()
-    .regex(
-      /^mongodb(\+srv)?:\/\/\S+$/,
-      "Must be a MongoDB connection string",
-    ),
+    .regex(/^mongodb(\+srv)?:\/\/\S+$/, "Must be a MongoDB connection string"),
+  JWT_SECRET: z
+    .string()
+    .regex(/^[a-f0-9]{64}$/i, "Must be a random 64-character hex secret"),
 });
 
 const result = envSchema.safeParse(process.env);
