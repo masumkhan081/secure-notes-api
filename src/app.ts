@@ -1,6 +1,7 @@
 import express from "express";
 import { authRouter } from "./features/auth/auth.routes.js";
 import { errorHandler } from "./middleware/error-handler.js";
+import { noteRouter } from "./features/notes/note.routes.js";
 
 export const app = express();
 
@@ -15,6 +16,7 @@ app.get("/api/health", (_req, res) => {
 });
 
 app.use("/api/auth", authRouter);
+app.use("/api/notes", noteRouter);
 
 app.use((_req, res) => {
   res.status(404).json({
